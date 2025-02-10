@@ -25,7 +25,7 @@ FunctionTracer tracer;  // 创建一个全局对象
 
 // 该函数在每次函数调用时执行
 VOID FunctionEntry(VOID* ip, std::string* name) {
-    std::cout << "Function called: " << *name << " at address: " << ip << std::endl;
+    // std::cout << "Function called: " << *name << " at address: " << ip << std::endl;
     tracer.AddFunction(*name);
 }
 
