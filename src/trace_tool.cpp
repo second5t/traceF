@@ -57,9 +57,17 @@ VOID InstrumentFunction(IMG img, VOID* v) {
     }
 }
 
-// 在程序结束时执行
-VOID Fini(INT32 code, VOID* v) {
+VOID WriteToFile() {
     tracer.DumpToFile("traced_functions.txt");
+}
+
+VOID Fini(INT32 code, VOID* v) {
+    WriteToFile();
+    std::cout << "Function tracing finished." << std::endl;
+}
+
+VOID ThreadFini(THREADID tid, const CONTEXT* ctxt, INT32 code, VOID* v) {
+    WriteToFile();
 }
 
 // Pin 工具的主入口
@@ -73,6 +81,7 @@ int main(int argc, char* argv[]) {
 
     IMG_AddInstrumentFunction(InstrumentFunction, 0);
     PIN_AddFiniFunction(Fini, 0);
+    PIN_AddThreadFiniFunction(ThreadFini, 0);
 
     PIN_StartProgram(); // 启动目标程序
     return 0;
