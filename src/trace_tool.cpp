@@ -4,6 +4,11 @@
 #include <vector>
 #include <string>
 
+const std::vector<std::string> excludeList = {
+    ".plt", "sanitizer", "asan", "@plt", "__lsan", "__interceptor",
+    "__interception", "cmplog", "__afl", "sancov", "ubsan"
+};
+
 class FunctionTracer {
 public:
     std::vector<std::string> functionNames; // 存储调用的函数名（允许重复）
@@ -29,6 +34,13 @@ VOID FunctionEntry(VOID* ip, std::string* name) {
     tracer.AddFunction(*name);
 }
 
+bool shouldExclude(const std::string& name) {
+    return name.empty() || std::any_of(excludeList.begin(), excludeList.end(),
+                                       [&name](const std::string& pattern) {
+                                           return name.find(pattern) != std::string::npos;
+                                       });
+}
+
 // 对每个函数进行插桩
 VOID InstrumentFunction(IMG img, VOID* v) {
     bool isMainImg = IMG_IsMainExecutable(img);
@@ -40,7 +52,7 @@ VOID InstrumentFunction(IMG img, VOID* v) {
             RTN_Open(rtn);
 
             std::string* funcName = new std::string(RTN_Name(rtn));
-            if (funcName->empty() || funcName->find(".plt") != std::string::npos) {
+            if (shouldExclude(*funcName)) {
                 RTN_Close(rtn);
                 continue;
             }
