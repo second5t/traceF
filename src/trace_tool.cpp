@@ -7,7 +7,7 @@
 
 const std::vector<std::string> excludeList = {
     ".plt", "sanitizer", "asan", "@plt", "__lsan", "__interceptor",
-    "__interception", "cmplog", "__afl", "sancov", "ubsan", "fuzzer"
+    "__interception", "cmplog", "__afl", "sancov", "ubsan", "fuzzer", "Fuzzer"
 };
 class FunctionTracer {
 public:
